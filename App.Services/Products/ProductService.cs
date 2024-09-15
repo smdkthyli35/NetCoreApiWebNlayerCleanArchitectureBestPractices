@@ -16,6 +16,15 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
         return ServiceResult<List<ProductDto>>.Success(productsAsDto);
     }
 
+    public async Task<ServiceResult<List<ProductDto>>> GetPagedAllListAsync(int pageNumber, int pageSize)
+    {
+        List<Product> products = await productRepository.GetAll().Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+        List<ProductDto> productAsDto = products.Select(p => new ProductDto(p.Id, p.Name, p.Price, p.Stock)).ToList();
+
+        return ServiceResult<List<ProductDto>>.Success(productAsDto);
+    }
+
     public async Task<ServiceResult<List<ProductDto>>> GetAllListAsync()
     {
         List<Product> products = await productRepository.GetAll().ToListAsync();
