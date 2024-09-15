@@ -11,6 +11,7 @@ public class ServiceResult<T>
     [JsonIgnore] public bool IsSuccess => ErrorMessage is null || ErrorMessage.Count == 0;
     [JsonIgnore] public bool IsFail => !IsSuccess;
     [JsonIgnore] public HttpStatusCode Status { get; set; }
+    [JsonIgnore] public string? UrlAsCreated { get; set; }
 
     public static ServiceResult<T> Success(T data, HttpStatusCode status = HttpStatusCode.OK)
     {
@@ -18,6 +19,16 @@ public class ServiceResult<T>
         {
             Data = data,
             Status = status
+        };
+    }
+
+    public static ServiceResult<T> SuccessAsCreated(T data, string urlAsCreated)
+    {
+        return new ServiceResult<T>()
+        {
+            Data = data,
+            Status = HttpStatusCode.Created,
+            UrlAsCreated = urlAsCreated
         };
     }
 
