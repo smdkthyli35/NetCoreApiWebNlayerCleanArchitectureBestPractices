@@ -2,7 +2,7 @@
 
 namespace App.Services.Products
 {
-    public class CreateProductRequestValidator : AbstractValidator<CreateProductRequest>>
+    public class CreateProductRequestValidator : AbstractValidator<CreateProductRequest>
     {
         public CreateProductRequestValidator()
         {

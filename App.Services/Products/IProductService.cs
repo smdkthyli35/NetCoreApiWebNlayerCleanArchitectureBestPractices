@@ -1,4 +1,6 @@
-﻿namespace App.Services.Products;
+﻿using App.Services.Products.Update;
+
+namespace App.Services.Products;
 
 public interface IProductService
 {

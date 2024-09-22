@@ -1,11 +1,13 @@
 ﻿using App.Repositories;
 using App.Repositories.Products;
+using App.Services.Products.Update;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 
 namespace App.Services.Products;
 
-public class ProductService(IProductRepository productRepository, IUnitOfWork unitOfWork) : IProductService
+public class ProductService(IProductRepository productRepository, IUnitOfWork unitOfWork, IMapper mapper) : IProductService
 {
     public async Task<ServiceResult<List<ProductDto>>> GetTopPriceProductsAsync(int count)
     {
@@ -20,7 +22,7 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
     {
         List<Product> products = await productRepository.GetAll().Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
-        List<ProductDto> productAsDto = products.Select(p => new ProductDto(p.Id, p.Name, p.Price, p.Stock)).ToList();
+        List<ProductDto> productAsDto = mapper.Map<List<ProductDto>>(products);
 
         return ServiceResult<List<ProductDto>>.Success(productAsDto);
     }
@@ -29,7 +31,7 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
     {
         List<Product> products = await productRepository.GetAll().ToListAsync();
 
-        List<ProductDto> productAsDto = products.Select(p => new ProductDto(p.Id, p.Name, p.Price, p.Stock)).ToList();
+        List<ProductDto> productAsDto = mapper.Map<List<ProductDto>>(products);
 
         return ServiceResult<List<ProductDto>>.Success(productAsDto);
     }
@@ -40,10 +42,10 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
 
         if (product is null)
         {
-            ServiceResult<ProductDto>.Fail("Product not found!", HttpStatusCode.NotFound);
+            return ServiceResult<ProductDto?>.Fail("Product not found!", HttpStatusCode.NotFound);
         }
 
-        ProductDto productAsDto = new ProductDto(product!.Id, product.Name, product.Price, product.Stock);
+        ProductDto productAsDto = mapper.Map<ProductDto>(product);
 
         return ServiceResult<ProductDto>.Success(productAsDto)!;
     }
