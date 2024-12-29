@@ -53,12 +53,7 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
 
     public async Task<ServiceResult<CreateProductResponse>> CreateAsync(CreateProductRequest request)
     {
-        Product product = new()
-        {
-            Name = request.Name,
-            Price = request.Price,
-            Stock = request.Stock,
-        };
+        Product product = mapper.Map<Product>(request);
 
         await productRepository.AddAsync(product);
         await unitOfWork.SaveChangesAsync();
@@ -86,10 +81,7 @@ public class ProductService(IProductRepository productRepository, IUnitOfWork un
             return ServiceResult.Fail("Product with the same name already exists!", HttpStatusCode.BadRequest);
         }
 
-
-        product.Name = request.Name;
-        product.Price = request.Price;
-        product.Stock = request.Stock;
+        product = mapper.Map(request, product);
 
         productRepository.Update(product);
         await unitOfWork.SaveChangesAsync();
